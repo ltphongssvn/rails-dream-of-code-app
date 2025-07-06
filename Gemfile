@@ -31,7 +31,6 @@ group :development, :test do
 
   # Use `pry` with an `edit` command
   gem 'pry-rails'
-  gem 'pry-byebug'
 
   # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
   gem "brakeman", require: false
