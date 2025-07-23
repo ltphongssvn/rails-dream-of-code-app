@@ -1,0 +1,39 @@
+# Lesson 02 Assignment
+
+# 1. Create (or reuse) the Spring 2026 Trimester
+spring_2026 = Trimester.find_or_create_by(
+  term: 'Spring',
+  year: 2026
+) do |t|
+  t.application_deadline = Date.new(2026,1,3)
+  t.start_date          = Date.new(2026,1,10)
+  t.end_date            = Date.new(2026,4,30)
+end
+spring_2026.persisted?  # => true
+
+# 2. Confirm no Course records exist yet
+Course.where(trimester: spring_2026).pluck(:coding_class_id)
+# => []
+
+# 3. Test creating one Course (should persist)
+first_cc = CodingClass.first
+tc = Course.find_or_create_by(coding_class: first_cc, trimester: spring_2026)
+[tc.persisted?, tc.errors.full_messages]  # => [true, []]
+
+# 4. Create Course records for all CodingClasses without duplicates
+CodingClass.all.each do |cc|
+  course = Course.find_or_create_by(coding_class: cc, trimester: spring_2026)
+  action = course.persisted? && course.created_at == course.updated_at ? 'Created' : 'Found existing'
+  puts "#{action} course for CodingClass ##{cc.id} – #{cc.title}"
+end
+
+# 🎮 Console output example:
+# Created course for CodingClass #1 – Intro to Programming
+# Created course for CodingClass #2 – React
+# Created course for CodingClass #3 – NodeJS
+# Created course for CodingClass #4 – Ruby on Rails
+# Created course for CodingClass #5 – Python
+
+# 5. Verify final set of Course records
+Course.where(trimester: spring_2026).pluck(:coding_class_id)
+# => [1, 2, 3, 4, 5]
