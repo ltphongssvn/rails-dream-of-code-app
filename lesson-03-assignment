@@ -1,0 +1,75 @@
+# Lesson 3 Assignment: Many-to-Many Relationship Implementation
+
+## 1. What tables do you need to add? Decide on table names and their associations to each other and any existing tables/models.
+
+We need to add two tables:
+- `topics` - Stores the educational topics (SQL, CSS, JavaScript, etc.)
+- `lessons_topics` - Join table that creates the many-to-many relationship between lessons and topics
+
+The associations work as follows:
+- A lesson has many topics through lessons_topics
+- A topic has many lessons through lessons_topics
+- The lessons_topics table belongs to both lesson and topic
+
+## 2. What columns are necessary for the associations you decided on?
+
+For the `topics` table:
+- `id` (primary key, automatically created by Rails)
+
+For the `lessons_topics` join table:
+- `lesson_id` (foreign key referencing lessons.id)
+- `topic_id` (foreign key referencing topics.id)
+- No `id` column needed (we use `id: false` in the migration)
+
+## 3. What other columns (if any) need to be included on the tables? What other data needs to be stored?
+
+For the `topics` table:
+- `title` (string, not null) - Stores the topic name like "SQL", "JavaScript", etc.
+- `created_at` and `updated_at` (timestamps) - Automatically added by Rails
+
+For the `lessons_topics` join table:
+- No additional columns needed for the basic many-to-many relationship
+- We chose not to include timestamps as they're not necessary for a simple join table
+
+## 4. Write out each table's name and column names with data types.
+
+**topics table:**
+- id: integer (primary key, auto-increment)
+- title: string (varchar 255), not null
+- created_at: datetime, not null
+- updated_at: datetime, not null
+
+**lessons_topics table:**
+- lesson_id: integer, not null, foreign key
+- topic_id: integer, not null, foreign key
+- Composite unique index on (lesson_id, topic_id) to prevent duplicates
+- Individual indexes on both foreign keys for query performance
+
+## 5. Generator commands used:
+
+First migration (topics table):
+bin/rails generate migration CreateTopics
+
+Second migration (join table):
+bin/rails generate migration CreateLessonsTopics
+
+## Implementation Notes:
+
+1. We used `t.references` in the join table migration, which automatically creates indexes on the foreign keys.
+
+2. We added a composite unique index to prevent the same topic from being associated with the same lesson multiple times.
+
+3. The join table uses `id: false` because the combination of lesson_id and topic_id serves as a natural composite key.
+
+4. We created a LessonsTopic model (following Rails naming conventions) to represent the join relationship, even though Rails can work without it. This gives us flexibility to add validations or methods later.
+
+5. We updated both the Lesson and Topic models with the appropriate has_many associations to complete the bidirectional many-to-many relationship.
+
+## Testing Results:
+
+Successfully created associations between lessons and topics in the Rails console, demonstrating:
+- Adding single topics to lessons
+- Adding multiple topics at once
+- Querying lessons by topic
+- Querying topics by lesson
+- Counting associations
