@@ -4,3 +4,4 @@ vendor
 log
 storage
 .idea/
+test_output.txt
