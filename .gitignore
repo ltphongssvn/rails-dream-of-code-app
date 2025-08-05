@@ -5,3 +5,7 @@ log
 storage
 .idea/
 CLAUDE.md
+test_output.txt
+GIT_WORKFLOW_GUIDE.md
+PROFESSIONAL_GIT_WORKFLOW.md
+git-workflow.sh
