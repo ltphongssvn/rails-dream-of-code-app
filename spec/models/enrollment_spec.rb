@@ -1,3 +1,4 @@
+# spec/models/enrollment_spec.rb
 require 'rails_helper'
 
 RSpec.describe Enrollment, type: :model do
@@ -34,41 +35,39 @@ RSpec.describe Enrollment, type: :model do
       )
     }
 
-    context 'when enrollment is created before the application deadline' do
-      it 'returns false' do
-        # Create enrollment with created_at before the deadline
-        enrollment = Enrollment.create!(
-          student: student,
-          course: course,
-          created_at: Date.new(2025, 8, 10) # 5 days before deadline
-        )
+    # DRY refactoring: Single enrollment definition that uses enrollment_date
+    # Each context below defines its own enrollment_date value
+    let(:enrollment) {
+      Enrollment.create!(
+        student: student,
+        course: course,
+        created_at: enrollment_date
+      )
+    }
 
+    context 'when enrollment is created before the application deadline' do
+      # Define the date for this specific context
+      let(:enrollment_date) { Date.new(2025, 8, 10) } # 5 days before deadline
+
+      it 'returns false' do
         expect(enrollment.is_past_application_deadline).to be false
       end
     end
 
     context 'when enrollment is created on the application deadline' do
-      it 'returns false' do
-        # Create enrollment with created_at on the deadline
-        enrollment = Enrollment.create!(
-          student: student,
-          course: course,
-          created_at: Date.new(2025, 8, 15) # Exactly on deadline
-        )
+      # Define the date for this specific context
+      let(:enrollment_date) { Date.new(2025, 8, 15) } # Exactly on deadline
 
+      it 'returns false' do
         expect(enrollment.is_past_application_deadline).to be false
       end
     end
 
     context 'when enrollment is created after the application deadline' do
-      it 'returns true' do
-        # Create enrollment with created_at after the deadline
-        enrollment = Enrollment.create!(
-          student: student,
-          course: course,
-          created_at: Date.new(2025, 8, 20) # 5 days after deadline
-        )
+      # Define the date for this specific context
+      let(:enrollment_date) { Date.new(2025, 8, 20) } # 5 days after deadline
 
+      it 'returns true' do
         expect(enrollment.is_past_application_deadline).to be true
       end
     end
