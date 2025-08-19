@@ -5,3 +5,24 @@ log
 storage
 .idea/
 test_output.txt
+
+# Security - never commit secrets
+config/master.key
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.crt
+*.csr
+
+# Context management system - local only, never commit
+CLAUDE.md
+.claude/
+.claude/**
+**/CLAUDE.md
+**/.claude/
+**/.claude/**
+*.claude.*
+*claude*
+*CLAUDE*
