@@ -1,3 +1,8 @@
+# File path: ~/code/ltphongssvn/code-the-dream-knifejaw-rails/practice/ThanhPhongLe/week-01/rails-dream-of-code-app/app/controllers/co
+# # urses_controller.rb
+# Courses Controller with eager loading optimization for show action
+# Updated per code reviewer feedback to include proper eager loading
+
 class CoursesController < ApplicationController
   before_action :set_course, only: %i[ show edit update destroy ]
 
@@ -47,13 +52,16 @@ class CoursesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_course
-      @course = Course.find(params.expect(:id))
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  # Updated with eager loading to prevent N+1 queries when displaying course details
+  def set_course
+    @course = Course
+                .includes(:coding_class, enrollments: :student)
+                .find(params.expect(:id))
+  end
 
-    # Only allow a list of trusted parameters through.
-    def course_params
-      params.expect(course: [ :coding_class_id, :trimester_id, :max_enrollment ])
-    end
+  # Only allow a list of trusted parameters through.
+  def course_params
+    params.expect(course: [ :coding_class_id, :trimester_id, :max_enrollment ])
+  end
 end
