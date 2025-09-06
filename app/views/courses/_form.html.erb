@@ -1,3 +1,4 @@
+<%# File: app/views/courses/_form.html.erb %>
 <%= form_with(model: course) do |form| %>
   <% if course.errors.any? %>
     <div style="color: red">
@@ -13,12 +14,12 @@
 
   <div>
     <%= form.label :coding_class_id, style: "display: block" %>
-    <%= form.text_field :coding_class_id %>
+    <%= form.collection_select :coding_class_id, CodingClass.all, :id, :title, { prompt: "Select a coding class" } %>
   </div>
 
   <div>
     <%= form.label :trimester_id, style: "display: block" %>
-    <%= form.text_field :trimester_id %>
+    <%= form.collection_select :trimester_id, Trimester.all, :id, :display_name, { prompt: "Select a trimester" } %>
   </div>
 
   <div>
