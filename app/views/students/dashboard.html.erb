@@ -1,0 +1,45 @@
+<!-- File: app/views/students/dashboard.html.erb -->
+<% content_for :title, "#{@student.full_name} - Dashboard" %>
+
+<h1><%= @student.full_name %> Dashboard</h1>
+
+<div class="student-info">
+  <p><strong>Email:</strong> <%= @student.email %></p>
+</div>
+
+<h2>Course Enrollments</h2>
+
+<% if @enrollments.any? %>
+  <div class="enrollments">
+    <% @enrollments.each do |enrollment| %>
+      <div class="enrollment-card">
+        <h3><%= enrollment.course.title %></h3>
+        <p>
+          <strong>Term:</strong>
+          <%= enrollment.course.trimester.term %> <%= enrollment.course.trimester.year %>
+        </p>
+        <p>
+          <strong>Grade:</strong>
+          <span class="grade-<%= enrollment.final_grade %>">
+            <%= enrollment.final_grade.capitalize %>
+          </span>
+        </p>
+        <p>
+          <%= link_to "View Course Details", enrollment.course, class: "course-link" %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="enrollment-summary">
+    <p><strong>Total Enrollments:</strong> <%= @enrollments.count %></p>
+    <p><strong>Completed Courses:</strong> <%= @enrollments.where(final_grade: 'completed').count %></p>
+  </div>
+<% else %>
+  <p>No course enrollments found for this student.</p>
+<% end %>
+
+<div class="navigation">
+  <%= link_to "Back to Student", @student %> |
+  <%= link_to "All Students", students_path %>
+</div>

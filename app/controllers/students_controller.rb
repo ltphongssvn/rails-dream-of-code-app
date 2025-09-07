@@ -1,5 +1,6 @@
+# File: app/controllers/students_controller.rb
 class StudentsController < ApplicationController
-  before_action :set_student, only: %i[ show edit update destroy ]
+  before_action :set_student, only: %i[ show edit update destroy dashboard ]
 
   # GET /students or /students.json
   def index
@@ -8,6 +9,11 @@ class StudentsController < ApplicationController
 
   # GET /students/1 or /students/1.json
   def show
+  end
+
+  # GET /students/1/dashboard
+  def dashboard
+    @enrollments = @student.enrollments.includes(:course => [:coding_class, :trimester])
   end
 
   # GET /students/new
@@ -58,13 +64,13 @@ class StudentsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_student
-      @student = Student.find(params.expect(:id))
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_student
+    @student = Student.find(params.expect(:id))
+  end
 
-    # Only allow a list of trusted parameters through.
-    def student_params
-      params.expect(student: [ :first_name, :last_name, :email ])
-    end
+  # Only allow a list of trusted parameters through.
+  def student_params
+    params.expect(student: [ :first_name, :last_name, :email ])
+  end
 end

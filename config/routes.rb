@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
-  resources :students
+  resources :students do
+    member do
+      get :dashboard
+    end
+  end
   resources :mentors
   resources :enrollments
   resources :mentor_enrollment_assignments
