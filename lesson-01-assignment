@@ -1,0 +1,51 @@
+Question 1
+Finish Task 1: Collect emails for students in the current Intro course
+
+# Assuming the necessary models and associations are set up correctly
+# and that the database contains the relevant data.
+
+# This query retrieves students enrolled in the "Intro to Programming" course
+# during the Spring 2025 trimester, selecting their IDs and emails.
+# It uses joins to connect the Student model with Enrollments, Courses,
+# CodingClasses, and Trimesters, filtering by the specific course title and trimester details.
+Student.joins(enrollments: { course: [:coding_class, :trimester] })
+       .where(coding_classes: { title: "Intro to Programming" },
+              trimesters: { term: "Spring", year: "2025" })
+       .distinct           # Prevents duplicate students
+       .reorder(nil)       # Removes any default ordering
+       .limit(2)
+       .pluck(:id, :email)
+       .each { |id, email| puts "#{id}, #{email}" }
+
+Question 2
+Task 2: Email all mentors who have not assigned a final grade
+
+# Assuming the Mentor, MentorEnrollmentAssignment, Enrollment, Course,
+# CodingClass, and Trimester models are set up correctly.
+# This query retrieves mentors who have not assigned a final grade
+# for students in the "Intro to Programming" course during the Spring 2025 trimester.
+# It uses joins to connect the MentorEnrollmentAssignment with Enrollment,
+# filtering by course ID and checking for null final grades.
+
+# First, we need to find the course based on the given criteria.
+# This query retrieves the course object for "Intro to Programming" in Spring 2025.
+
+course = Course.joins(:coding_class, :trimester)
+               .where(coding_classes: { title: "Intro to Programming" })
+               .where(trimesters: { term: "Spring", year: "2025" })
+               .first
+
+# Now we can find mentors who have not assigned a final grade for this course.
+# We use MentorEnrollmentAssignment to find the relevant mentor IDs,
+# then retrieve their emails.
+# Note: Ensure that MentorEnrollmentAssignment is correctly associated with Enrollment and Mentor.
+
+Mentor.where(
+  id: MentorEnrollmentAssignment
+    .joins(:enrollment)
+    .where(enrollments: { course_id: course.id, final_grade: nil })
+    .distinct
+    .pluck(:mentor_id)
+).limit(2)
+.pluck(:id, :email)
+.each { |id, email| puts "#{id}, #{email}" }
