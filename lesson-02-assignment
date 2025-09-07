@@ -1,0 +1,262 @@
+# Lesson 02 Assignment
+
+# 1. Create (or reuse) the Spring 2026 Trimester
+spring_2026 = Trimester.find_or_create_by(
+  term: 'Spring',
+  year: 2026
+) do |t|
+  t.application_deadline = Date.new(2026,1,3)
+  t.start_date          = Date.new(2026,1,10)
+  t.end_date            = Date.new(2026,4,30)
+end
+spring_2026.persisted?  # => true
+
+# 2. Confirm no Course records exist yet
+Course.where(trimester: spring_2026).pluck(:coding_class_id)
+# => []
+
+# 3. Test creating one Course (should persist)
+first_cc = CodingClass.first
+tc = Course.find_or_create_by(coding_class: first_cc, trimester: spring_2026)
+[tc.persisted?, tc.errors.full_messages]  # => [true, []]
+
+# 4. Create Course records for all CodingClasses without duplicates
+CodingClass.all.each do |cc|
+  course = Course.find_or_create_by(coding_class: cc, trimester: spring_2026)
+  action = course.persisted? && course.created_at == course.updated_at ? 'Created' : 'Found existing'
+  puts "#{action} course for CodingClass ##{cc.id} – #{cc.title}"
+end
+
+# 🎮 Console output example:
+# Created course for CodingClass #1 – Intro to Programming
+# Created course for CodingClass #2 – React
+# Created course for CodingClass #3 – NodeJS
+# Created course for CodingClass #4 – Ruby on Rails
+# Created course for CodingClass #5 – Python
+
+# 5. Verify final set of Course records
+Course.where(trimester: spring_2026).pluck(:coding_class_id)
+# => [1, 2, 3, 4, 5]
+
+# Question 2: Create a new student record and enroll them in Intro to Programming
+# with a mentor who has no more than 2 students assigned
+
+# First, verify we have our Spring 2026 trimester
+spring_2026 = Trimester.find_by(term: 'Spring', year: 2026)
+# => #<Trimester id: 8, term: "Spring", year: 2026...>
+
+# Create a new student
+new_student = Student.create!(
+  first_name: "Alex",
+  last_name: "Thompson",
+  email: "alex.thompson@example.com"
+)
+# => #<Student id: 52, first_name: "Alex", last_name: "Thompson"...>
+
+# Find the Intro to Programming course for Spring 2026
+intro_course = Course.joins(:coding_class).find_by(
+  coding_classes: { title: "Intro to Programming" },
+  trimester_id: 8
+)
+# => #<Course id: 36, coding_class_id: 1, trimester_id: 8...>
+
+# Find a mentor with no more than 2 students
+# Since this is Spring 2026 and no enrollments exist yet for this trimester,
+# all mentors have 0 students for Spring 2026
+available_mentor = Mentor.first
+# => #<Mentor id: 1, first_name: "Carmelo", last_name: "Corwin"...>
+
+# Create the enrollment
+enrollment = Enrollment.create!(
+  student_id: 52,
+  course_id: 36
+)
+# => #<Enrollment id: 91, course_id: 36, student_id: 52...>
+
+# Assign the mentor to this enrollment
+mentor_assignment = MentorEnrollmentAssignment.create!(
+  mentor_id: 1,
+  enrollment_id: 91
+)
+# => #<MentorEnrollmentAssignment id: 91, mentor_id: 1, enrollment_id: 91...>
+
+# Verification
+puts "Student: #{new_student.first_name} #{new_student.last_name} (ID: #{new_student.id})"
+puts "Course: #{intro_course.coding_class.title} - #{intro_course.trimester.term} #{intro_course.trimester.year}"
+puts "Mentor: #{available_mentor.first_name} #{available_mentor.last_name}"
+puts "Enrollment ID: #{enrollment.id}"
+puts "Mentor Assignment ID: #{mentor_assignment.id}"
+# Output:
+# Student: Alex Thompson (ID: 52)
+# Course: Intro to Programming - Spring 2026
+# Mentor: Carmelo Corwin
+# Enrollment ID: 91
+# Mentor Assignment ID: 91
+
+# Question 3 - Project Description: Hourly Time Tracker & Productivity System
+
+# Project Overview:
+# I will build a web-based time tracking application that allows users to log activities
+# for each hour of their day and compare their time usage patterns across different time
+# periods. The system will help users understand how they spend their time and set goals
+# based on their historical patterns.
+
+# Target Users:
+# The primary users are individuals who want to improve their personal productivity and
+# time management. This includes:
+# - Students who want to track study hours and maintain consistent learning habits
+# - Professionals who need to balance work, exercise, and personal time
+# - Anyone interested in understanding and optimizing their daily routines
+
+# Core Features and User Scenarios:
+
+# 1. Activity Logging
+# - A user can log what activity they did for each hour of the day
+# - Activities can be categorized (sleep, work, exercise, learning, recreation, etc.)
+# - Users can specify sub-categories (e.g., "learning" → "Ruby on Rails" or "JavaScript")
+
+# 2. Historical Comparison
+# - A user can view what they were doing at the same hour yesterday, last week, or last month
+# - The system displays side-by-side comparisons of time usage patterns
+# - Users can identify trends in their behavior (e.g., "I always get distracted at 2pm")
+
+# 3. Goal Setting Based on History
+# - When planning their day, users can see what they accomplished in previous time periods
+# - Users can set goals like "study for at least as long as yesterday"
+# - The system can suggest time slots based on past successful patterns
+
+# 4. Progress Tracking
+# - Users can track whether they met their goals for each hour
+# - Weekly and monthly summaries show improvement trends
+# - Visual reports help users see their productivity patterns at a glance
+
+# User Flow Example:
+# 1. At 9:00 AM, Sarah opens the app on her phone
+# 2. She sees that yesterday from 9-10 AM, she studied Rails for 55 minutes
+# 3. She sets a goal to study Rails for at least 55 minutes again today
+# 4. At 10:00 AM, she logs that she studied Rails for 60 minutes
+# 5. The app shows her streak of consecutive days studying in the morning
+# 6. At the end of the day, she reviews her time usage compared to yesterday
+# 7. She notices she spent less time on social media and more time exercising
+# 8. She uses this information to plan tomorrow's schedule
+
+# Key Benefits:
+# - Accountability through historical comparison
+# - Data-driven insights into time usage patterns
+# - Motivation through progress tracking
+# - Better planning through understanding past behavior
+
+# Question 4 - Data Model Design for Hourly Time Tracker
+
+# Main Entities (Tables):
+
+# 1. users
+#    - Represents people who use the time tracking system
+#    - Each user has their own time entries, categories, and goals
+
+# 2. categories
+#    - The types of activities users can log (work, sleep, exercise, learning, etc.)
+#    - Users can create custom categories for their specific needs
+
+# 3. time_entries
+#    - The core data: what a user did during a specific hour
+#    - Links a user to a category for a specific date and hour
+
+# 4. goals
+#    - Targets users set for themselves based on historical data
+#    - Can be daily, weekly, or general recurring goals
+
+# 5. goal_completions
+#    - Tracks whether a user met their goal for a specific date
+#    - Allows for progress tracking and streak calculation
+
+# ERD Text Representation:
+
+# users
+# - id (primary key)
+# - email (string, unique)
+# - encrypted_password (string)
+# - first_name (string)
+# - last_name (string)
+# - time_zone (string) # Important for a time-tracking app!
+# - created_at (datetime)
+# - updated_at (datetime)
+
+# categories
+# - id (primary key)
+# - user_id (foreign key) # Each user has their own categories
+# - name (string)
+# - color (string) # For visual representation in charts
+# - parent_category_id (integer, nullable) # For subcategories like "Learning > Rails"
+# - created_at (datetime)
+# - updated_at (datetime)
+
+# time_entries
+# - id (primary key)
+# - user_id (foreign key)
+# - category_id (foreign key)
+# - date (date)
+# - hour (integer, 0-23) # Which hour of the day
+# - duration_minutes (integer) # How many minutes of the hour were used
+# - notes (text, nullable) # Optional details about what was done
+# - created_at (datetime)
+# - updated_at (datetime)
+# Indexes: [user_id, date, hour] for fast lookups
+
+# goals
+# - id (primary key)
+# - user_id (foreign key)
+# - category_id (foreign key, nullable) # Goal might be category-specific
+# - goal_type (string) # 'daily', 'weekly', 'specific_hour'
+# - target_minutes (integer) # How many minutes they want to achieve
+# - hour (integer, nullable) # For hour-specific goals like "study at 9am"
+# - days_of_week (string) # JSON array of days this goal applies to
+# - active (boolean, default: true)
+# - created_at (datetime)
+# - updated_at (datetime)
+
+# goal_completions
+# - id (primary key)
+# - goal_id (foreign key)
+# - date (date)
+# - achieved (boolean)
+# - actual_minutes (integer)
+# - created_at (datetime)
+# - updated_at (datetime)
+
+# Key Relationships:
+# - User has_many :categories
+# - User has_many :time_entries
+# - User has_many :goals
+# - Category belongs_to :user
+# - Category has_many :time_entries
+# - Category belongs_to :parent_category (self-referential)
+# - TimeEntry belongs_to :user
+# - TimeEntry belongs_to :category
+# - Goal belongs_to :user
+# - Goal belongs_to :category (optional)
+# - Goal has_many :goal_completions
+# - GoalCompletion belongs_to :goal
+
+# Design Decisions Explained:
+
+# 1. Why separate time_entries from goals?
+#    Time entries are historical facts ("I studied Rails for 45 minutes at 9am")
+#    Goals are future intentions ("I want to study at least 45 minutes at 9am")
+#    Keeping them separate allows for complex goal types and progress tracking
+
+# 2. Why store hour as an integer (0-23)?
+#    This makes queries much easier: WHERE hour = 9 vs parsing timestamps
+#    Combined with the date column, we can reconstruct exact times when needed
+
+# 3. Why allow parent categories?
+#    Users might want "Learning" as a parent with "Rails", "JavaScript" as subcategories
+#    This enables both detailed tracking and high-level summaries
+
+# 4. Why track duration_minutes instead of end_time?
+#    Users might not use the full hour for one activity
+#    This approach handles partial hours naturally
+
+# 5. Why store time_zone on the user?
+#    Critical for a time-tracking app - 9am means different things in different zones
+#    Allows the app to show historical data correctly even if user travels
