@@ -1,0 +1,59 @@
+# Lesson 4 Assignment: Create Your Own Data Model and Schema
+
+## Assignment Status: COMPLETED ✅
+
+This week's assignment focused on creating a custom data model and schema design. The assignment content has been integrated into `lesson-02-assignment` as Questions 3 and 4.
+
+## Assignment Content Location
+
+The Week 4 assignment is documented in `lesson-02-assignment`:
+- **Question 3**: Project Description - Hourly Time Tracker & Productivity System
+- **Question 4**: Data Model Design for the time tracking application
+
+## Project Summary: Hourly Time Tracker & Productivity System
+
+### Project Overview
+A web-based time tracking application that allows users to log activities for each hour of their day and compare time usage patterns across different periods.
+
+### Target Users
+- Students tracking study hours and learning habits
+- Professionals balancing work, exercise, and personal time
+- Anyone optimizing their daily routines
+
+### Core Features
+1. **Activity Logging**: Hour-by-hour activity tracking with categories
+2. **Historical Comparison**: Compare current patterns with past periods
+3. **Goal Setting**: Set targets based on historical data
+4. **Progress Tracking**: Monitor goal achievement and trends
+
+### Data Model Design
+
+#### Main Tables:
+- **users**: User accounts with timezone support
+- **categories**: Activity types (work, sleep, exercise, learning, etc.)
+- **time_entries**: Core data linking users to categories by date/hour
+- **goals**: User-defined targets for time usage
+- **goal_completions**: Progress tracking for goal achievement
+
+#### Key Design Decisions:
+- Hour stored as integer (0-23) for efficient queries
+- Duration in minutes for partial hour tracking
+- Parent categories for hierarchical organization
+- User timezone storage for accurate time tracking
+- Composite indexes for performance optimization
+
+## Implementation Notes
+
+The data model supports:
+- Multi-user time tracking with privacy
+- Flexible categorization system
+- Historical pattern analysis
+- Goal setting and progress monitoring
+- Timezone-aware time management
+
+This assignment demonstrates proficiency in:
+- Database schema design
+- Entity relationship modeling
+- Performance optimization through indexing
+- User experience consideration in data structure
+- Scalable application architecture
