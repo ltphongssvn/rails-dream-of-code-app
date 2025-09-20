@@ -57,11 +57,11 @@ class CoursesController < ApplicationController
   def set_course
     @course = Course
                 .includes(:coding_class, enrollments: :student)
-                .find(params.expect(:id))
+                .find(params[:id])
   end
 
   # Only allow a list of trusted parameters through.
   def course_params
-    params.expect(course: [ :coding_class_id, :trimester_id, :max_enrollment ])
+    params.require(:course).permit(:coding_class_id, :trimester_id, :max_enrollment)
   end
 end

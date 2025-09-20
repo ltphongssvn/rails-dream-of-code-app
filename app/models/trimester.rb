@@ -9,6 +9,6 @@ class Trimester < ApplicationRecord
   validates :application_deadline, presence: true
 
   def display_name
-    "#{term}-#{year}"
+    "#{term} #{year}"
   end
 end

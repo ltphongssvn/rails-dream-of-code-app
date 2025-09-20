@@ -38,7 +38,7 @@ class TrimestersController < ApplicationController
   # PATCH/PUT /trimesters/1 or /trimesters/1.json
   def update
     # Check if application_deadline parameter is missing
-    if params[:trimester][:application_deadline].blank?
+    if params.dig(:trimester, :application_deadline).blank?
       respond_to do |format|
         format.html { render :edit, status: :bad_request }
         format.json { render json: { error: "Application deadline is required" }, status: :bad_request }
@@ -48,7 +48,7 @@ class TrimestersController < ApplicationController
 
     # Validate date format
     begin
-      Date.parse(params[:trimester][:application_deadline]) if params[:trimester][:application_deadline].present?
+      Date.parse(params.dig(:trimester, :application_deadline)) if params.dig(:trimester, :application_deadline).present?
     rescue ArgumentError
       respond_to do |format|
         format.html { render :edit, status: :bad_request }
