@@ -1,5 +1,7 @@
 class StudentsController < ApplicationController
   before_action :set_student, only: %i[ show edit update destroy ]
+  # Require authentication for all student management actions
+  before_action :require_authentication
 
   # GET /students or /students.json
   def index

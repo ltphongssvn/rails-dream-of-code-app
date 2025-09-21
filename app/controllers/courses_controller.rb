@@ -1,5 +1,7 @@
 class CoursesController < ApplicationController
   before_action :set_course, only: %i[ show edit update destroy ]
+  # Allow public viewing of courses, but require authentication for modifications
+  before_action :require_authentication, except: [:index, :show]
 
   # GET /courses or /courses.json
   def index

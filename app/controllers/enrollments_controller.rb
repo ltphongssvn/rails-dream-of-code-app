@@ -1,5 +1,7 @@
 class EnrollmentsController < ApplicationController
   before_action :set_enrollment, only: %i[ show edit update destroy ]
+  # Require authentication for all enrollment operations - this is sensitive academic data
+  before_action :require_authentication
 
   # GET /enrollments or /enrollments.json
   def index
