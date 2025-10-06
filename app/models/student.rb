@@ -6,6 +6,7 @@ class Student < ApplicationRecord
   
   validates :first_name, :last_name, :email, presence: true
   validates :email, uniqueness: true
+  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP, message: "must be a valid email address" }
   validates :password, length: { minimum: 6 }, allow_nil: true
   
   def full_name
