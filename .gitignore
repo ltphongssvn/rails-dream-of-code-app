@@ -4,3 +4,8 @@ vendor
 log
 storage
 .idea/
+
+# Temporary work files
+pr_comment.md
+rspec_results.txt
+*.fixed
