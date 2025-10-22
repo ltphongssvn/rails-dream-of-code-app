@@ -52,4 +52,8 @@ Rails.application.routes.draw do
   # Root route - defines what shows at the base URL (/)
   # Points to the home controller's index action
   root "home#index"
+
+  # Time Tracker System Routes for Week 10
+  resources :categories
+  resources :time_entries
 end

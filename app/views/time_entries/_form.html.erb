@@ -1,0 +1,50 @@
+<%= form_with model: @time_entry, local: true do |f| %>
+  <% if @time_entry.errors.any? %>
+    <div id="error_explanation" class="alert alert-danger">
+      <h4><%= pluralize(@time_entry.errors.count, "error") %> prohibited this time entry from being saved:</h4>
+      <ul>
+        <% @time_entry.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+  <div class="form-group">
+    <%= f.label :category_id, "Activity Category" %>
+    <%= f.select :category_id, 
+                 options_from_collection_for_select(@categories, :id, :name, @time_entry.category_id),
+                 { prompt: "Select a category..." },
+                 { class: "form-control" } %>
+  </div>
+  
+  <div class="form-group">
+    <%= f.label :date %>
+    <%= f.date_field :date, class: "form-control" %>
+  </div>
+  
+  <div class="form-group">
+    <%= f.label :hour, "Hour (0-23, optional)" %>
+    <%= f.number_field :hour, class: "form-control", min: 0, max: 23,
+                        placeholder: "Leave blank if time doesn't matter" %>
+    <small class="form-text text-muted">Use 24-hour format (0 = midnight, 13 = 1 PM)</small>
+  </div>
+  
+  <div class="form-group">
+    <%= f.label :duration_minutes, "Duration (minutes)" %>
+    <%= f.number_field :duration_minutes, class: "form-control", min: 1, max: 1440,
+                        placeholder: "How many minutes?" %>
+    <small class="form-text text-muted">Enter between 1 and 1440 minutes (24 hours maximum)</small>
+  </div>
+  
+  <div class="form-group">
+    <%= f.label :notes, "Notes (optional)" %>
+    <%= f.text_area :notes, class: "form-control", rows: 3, 
+                     placeholder: "Any additional details about this activity..." %>
+  </div>
+  
+  <div class="form-group">
+    <%= f.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", time_entries_path, class: "btn btn-secondary" %>
+  </div>
+<% end %>

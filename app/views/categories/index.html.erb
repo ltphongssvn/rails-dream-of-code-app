@@ -1,0 +1,35 @@
+<h1>Categories</h1>
+
+<% if notice.present? %>
+  <div class="alert alert-success">
+    <%= notice %>
+  </div>
+<% end %>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Color</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @categories.each do |category| %>
+      <tr>
+        <td><%= category.name %></td>
+        <td>
+          <% if category.color.present? %>
+            <span style="display: inline-block; width: 20px; height: 20px; background-color: <%= category.color %>; border: 1px solid #ccc;"></span>
+            <%= category.color %>
+          <% end %>
+        </td>
+        <td>
+          <%= link_to "Edit", edit_category_path(category), class: "btn btn-sm btn-primary" %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to "New Category", new_category_path, class: "btn btn-primary" %>

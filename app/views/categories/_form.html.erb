@@ -1,0 +1,30 @@
+<%= form_with model: @category, local: true do |f| %>
+  <% if @category.errors.any? %>
+    <div id="error_explanation" class="alert alert-danger">
+      <h4><%= pluralize(@category.errors.count, "error") %> prohibited this category from being saved:</h4>
+      <ul>
+        <% @category.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+  <div class="form-group">
+    <%= f.label :name %>
+    <%= f.text_field :name, class: "form-control", placeholder: "e.g., Work, Exercise, Learning" %>
+  </div>
+  
+  <div class="form-group">
+    <%= f.label :color %>
+    <%= f.text_field :color, class: "form-control", placeholder: "#FF5733 or #F57", 
+                      pattern: "^#[0-9A-Fa-f]{3,6}$",
+                      title: "Enter a hex color code like #FF5733 or #F57" %>
+    <small class="form-text text-muted">Optional: Choose a color for this category</small>
+  </div>
+  
+  <div class="form-group">
+    <%= f.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", categories_path, class: "btn btn-secondary" %>
+  </div>
+<% end %>
