@@ -1,4 +1,5 @@
 # File path: ~/code/ltphongssvn/rails-dream-of-code-app/app/controllers/submissions_controller.rb
+# File: app/controllers/submissions_controller.rb
 class SubmissionsController < ApplicationController
   # Authorization: Students can create submissions, Mentors can edit/update them
   before_action :require_student, only: %i[ new create ]
@@ -14,6 +15,8 @@ class SubmissionsController < ApplicationController
     # Should only show lessons for this specific course
     @enrollments = Enrollment.where(course_id: @course.id, student_id: current_user.id) if current_user_is_student?
     @lessons = @course.lessons if @course.respond_to?(:lessons)
+    @enrollments = @course.enrollments.includes(:student)
+    @lessons = @course.lessons
   end
   
   def create
@@ -26,6 +29,8 @@ class SubmissionsController < ApplicationController
       # Re-populate the form data on validation failure
       @enrollments = Enrollment.where(course_id: @course.id, student_id: current_user.id) if current_user_is_student?
       @lessons = @course.lessons if @course.respond_to?(:lessons)
+      @enrollments = @course.enrollments.includes(:student)
+      @lessons = @course.lessons
       render :new
     end
   end
@@ -65,4 +70,8 @@ class SubmissionsController < ApplicationController
         params.require(:submission).permit(:lesson_id, :enrollment_id, :mentor_id, :review_result, :reviewed_at)
       end
     end
+  # Only allow a list of trusted parameters through.
+  def submission_params
+    params.require(:submission).permit(:lesson_id, :enrollment_id, :mentor_id, :review_result, :reviewed_at)
+  end
 end
