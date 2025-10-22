@@ -1,3 +1,5 @@
+# config/routes.rb
+# Full path: ~/code/ltphongssvn/rails-dream-of-code-app/config/routes.rb
 # File path: ~/code/ltphongssvn/code-the-dream-knifejaw-rails/practice/ThanhPhongLe/week-01/rails-dream-of-code-app/config/routes.rb
 # This file defines all the URL routes for the Rails Dream of Code application
 # Resolved merge conflict: Combined Week 7 admin dashboard route with Week 9 trimesters resources
@@ -7,7 +9,6 @@ Rails.application.routes.draw do
   get "login" => "sessions#new", as: :login
   post "login" => "sessions#create"
   delete "logout" => "sessions#destroy", as: :logout
-
   resources :students
   # Student routes with custom dashboard member action
   # The member block adds a /students/:id/dashboard route for individual student dashboards
@@ -44,6 +45,9 @@ Rails.application.routes.draw do
 
   # Rails standard routes below this line
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
+  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  get "up" => "rails/health#show", as: :rails_health_check
 
   # Health check endpoint
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -54,7 +58,6 @@ Rails.application.routes.draw do
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
-
   # Defines the root path route ("/")
   # API Routes
   namespace :api do
@@ -62,6 +65,9 @@ Rails.application.routes.draw do
       resources :courses, only: [] do
         resources :enrollments, only: [:index]
       end
+      # Week 14: Add students resource for API
+      # Only implementing create action for now as per test requirements
+      resources :students, only: [:create]
     end
   end
 
