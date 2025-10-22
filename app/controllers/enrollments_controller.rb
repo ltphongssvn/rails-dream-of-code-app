@@ -1,28 +1,31 @@
+# File path: ~/code/ltphongssvn/rails-dream-of-code-app/app/controllers/enrollments_controller.rb
 class EnrollmentsController < ApplicationController
   before_action :set_enrollment, only: %i[ show edit update destroy ]
-
+  # Authorization: Only admins can view and manage student enrollments
+  before_action :require_admin
+  
   # GET /enrollments or /enrollments.json
   def index
     @enrollments = Enrollment.all
   end
-
+  
   # GET /enrollments/1 or /enrollments/1.json
   def show
   end
-
+  
   # GET /enrollments/new
   def new
     @enrollment = Enrollment.new
   end
-
+  
   # GET /enrollments/1/edit
   def edit
   end
-
+  
   # POST /enrollments or /enrollments.json
   def create
     @enrollment = Enrollment.new(enrollment_params)
-
+    
     respond_to do |format|
       if @enrollment.save
         format.html { redirect_to @enrollment, notice: "Enrollment was successfully created." }
@@ -33,7 +36,7 @@ class EnrollmentsController < ApplicationController
       end
     end
   end
-
+  
   # PATCH/PUT /enrollments/1 or /enrollments/1.json
   def update
     respond_to do |format|
@@ -46,25 +49,25 @@ class EnrollmentsController < ApplicationController
       end
     end
   end
-
+  
   # DELETE /enrollments/1 or /enrollments/1.json
   def destroy
     @enrollment.destroy!
-
+    
     respond_to do |format|
-      format.html { redirect_to enrollments_path, status: :see_other, notice: "Enrollment was successfully destroyed." }
+      format.html { redirect_to enrollments_url, notice: "Enrollment was successfully destroyed." }
       format.json { head :no_content }
     end
   end
-
+  
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_enrollment
-      @enrollment = Enrollment.find(params.expect(:id))
+      @enrollment = Enrollment.find(params[:id])
     end
-
+    
     # Only allow a list of trusted parameters through.
     def enrollment_params
-      params.expect(enrollment: [ :course_id, :student_id, :final_grade ])
+      params.require(:enrollment).permit(:student_id, :course_id, :grade, :enrollment_status)
     end
 end
