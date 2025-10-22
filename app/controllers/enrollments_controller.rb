@@ -1,6 +1,9 @@
 # File path: ~/code/ltphongssvn/rails-dream-of-code-app/app/controllers/enrollments_controller.rb
 class EnrollmentsController < ApplicationController
   before_action :set_enrollment, only: %i[ show edit update destroy ]
+  # Require authentication for all enrollment operations - this is sensitive academic data
+  before_action :require_authentication
+
   # Authorization: Only admins can view and manage student enrollments
   before_action :require_admin
   

@@ -3,6 +3,12 @@
 # Resolved merge conflict: Combined Week 7 admin dashboard route with Week 9 trimesters resources
 
 Rails.application.routes.draw do
+  # Authentication routes
+  get "login" => "sessions#new", as: :login
+  post "login" => "sessions#create"
+  delete "logout" => "sessions#destroy", as: :logout
+
+  resources :students
   # Student routes with custom dashboard member action
   # The member block adds a /students/:id/dashboard route for individual student dashboards
   resources :students do

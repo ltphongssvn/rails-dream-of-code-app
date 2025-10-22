@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_01_191924) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_21_012022) do
+  create_table "categories", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "name"
+    t.string "color"
+    t.integer "parent_category_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_categories_on_user_id"
+  end
+
   create_table "coding_classes", force: :cascade do |t|
     t.string "title"
     t.text "description"
@@ -65,6 +75,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_01_191924) do
     t.integer "max_concurrent_students"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "password_digest"
   end
 
   create_table "students", force: :cascade do |t|
@@ -73,6 +84,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_01_191924) do
     t.string "email"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "password_digest"
+  end
+
+  create_table "time_entries", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "category_id", null: false
+    t.date "date"
+    t.integer "hour"
+    t.integer "duration_minutes"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "index_time_entries_on_category_id"
+    t.index ["user_id"], name: "index_time_entries_on_user_id"
   end
 
   create_table "trimesters", force: :cascade do |t|
@@ -85,6 +110,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_01_191924) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "users", force: :cascade do |t|
+    t.string "email"
+    t.string "encrypted_password"
+    t.string "first_name"
+    t.string "last_name"
+    t.string "time_zone"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_foreign_key "categories", "users"
   add_foreign_key "courses", "coding_classes"
   add_foreign_key "courses", "trimesters"
   add_foreign_key "enrollments", "courses"
@@ -92,4 +128,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_01_191924) do
   add_foreign_key "lessons", "courses"
   add_foreign_key "mentor_enrollment_assignments", "enrollments"
   add_foreign_key "mentor_enrollment_assignments", "mentors"
+  add_foreign_key "time_entries", "categories"
+  add_foreign_key "time_entries", "users"
 end

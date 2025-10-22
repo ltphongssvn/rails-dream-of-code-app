@@ -6,6 +6,9 @@
 
 class CoursesController < ApplicationController
   before_action :set_course, only: %i[ show edit update destroy ]
+  # Allow public viewing of courses, but require authentication for modifications
+  before_action :require_authentication, except: [:index, :show]
+
   # Authorization: Only admins can create, update, and delete courses
   before_action :require_admin, only: %i[ new create edit update destroy ]
   
