@@ -55,6 +55,16 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
+  # Defines the root path route ("/")
+  # API Routes
+  namespace :api do
+    namespace :v1 do
+      resources :courses, only: [] do
+        resources :enrollments, only: [:index]
+      end
+    end
+  end
+
   # Root route - defines what shows at the base URL (/)
   # Points to the home controller's index action
   root "home#index"
